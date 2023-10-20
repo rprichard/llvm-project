@@ -148,6 +148,11 @@ class ClangFormatHelper(FormatHelper):
             args.end_rev,
             "--",
         ] + cpp_files
+
+        # For manual testing purposes...
+        if "INDUCE_FAILURE_IN_FORMATTER" in " ".join(cpp_files):
+            cf_cmd.insert(1, "--induce-failure")
+
         print(f"Running: {' '.join(cf_cmd)}")
         self.cf_cmd = cf_cmd
         proc = subprocess.run(cf_cmd, capture_output=True)
@@ -187,11 +192,17 @@ class DarkerFormatHelper(FormatHelper):
             return None
         darker_cmd = [
             "darker",
+            "--verbose",
             "--check",
             "--diff",
             "-r",
             f"{args.start_rev}..{args.end_rev}",
         ] + py_files
+
+        # For manual testing purposes...
+        if "INDUCE_FAILURE_IN_FORMATTER" in " ".join(py_files):
+            darker_cmd += ["--induce-failure"]
+
         print(f"Running: {' '.join(darker_cmd)}")
         self.darker_cmd = darker_cmd
         proc = subprocess.run(darker_cmd, capture_output=True)
