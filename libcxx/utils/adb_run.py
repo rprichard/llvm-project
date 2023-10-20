@@ -44,7 +44,7 @@ def run_adb_sync_command(command: List[str]) -> None:
         # unrelated to the test program's stdout output. A common error caught
         # here is "No space left on device".
         sys.stderr.write(
-                f"{proc.stdout}\n"
+            f"{proc.stdout}\n"
                     f"error: adb command exited with {proc.returncode}: "
                         f"{shlex.join(command)}\n")
 
