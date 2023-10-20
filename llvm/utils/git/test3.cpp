@@ -1,6 +1,5 @@
 int three() {
-  if(code)
-  {
-    return  1+2;
+  if (code) {
+    return 1 + 2;
   }
 }
