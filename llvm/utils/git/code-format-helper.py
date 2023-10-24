@@ -18,6 +18,15 @@ import github
 from github import IssueComment, PullRequest
 
 
+# HACK for debugging...
+for cmd in ["git log -n2", "git show", "git show HEAD~1", "git show HEAD^1", "git show HEAD^2", "ls llvm/utils/git"]:
+    print(f"=== Running {cmd}")
+    sys.stdout.flush()
+    os.system(cmd)
+    print("^^^^^^")
+    sys.stdout.flush()
+
+
 class FormatHelper:
     COMMENT_TAG = "<!--LLVM CODE FORMAT COMMENT: {fmt}-->"
     name: str
