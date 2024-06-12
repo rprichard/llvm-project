@@ -13,6 +13,12 @@
 #include "test_macros.h"
 #include "type_algorithms.h"
 
+int some_file( void ) {
+
+  return  1+2;     // three!
+
+}
+
 // concatenate
 static_assert(std::is_same<types::concatenate_t<types::type_list<> >, types::type_list<> >::value, "");
 static_assert(std::is_same<types::concatenate_t<types::type_list<int> >, types::type_list<int> >::value, "");
