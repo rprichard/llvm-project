@@ -97,6 +97,7 @@ def run_command(args: argparse.Namespace) -> int:
     sync_test_dir(local_dir, remote_dir)
 
     adb_shell_command = (
+        # Add another comment...
         # Set the environment early so that PATH can be overridden. Overriding
         # PATH is useful for:
         #  - Replacing older shell utilities with toybox (e.g. on old devices).
