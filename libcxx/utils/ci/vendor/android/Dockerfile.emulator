@@ -37,6 +37,12 @@ ARG ABI   # e.g. armeabi-v7a, x86
 ENV EMU_PACKAGE_NAME="system-images;android-${API};${TYPE};${ABI}"
 RUN sdkmanager --install "${EMU_PACKAGE_NAME}"
 
+# TODO: move line!
+RUN sdkmanager --install platform-tools
+
+# TODO: move line! (and remove net-tools -- I needed it for netstat debugging)
+RUN apt-get update && apt-get install -y socat net-tools
+
 COPY ./emulator-entrypoint.sh /opt/emulator/bin/emulator-entrypoint.sh
 COPY ./emulator-wait-for-ready.sh /opt/emulator/bin/emulator-wait-for-ready.sh
 ENV PATH="/opt/emulator/bin:${PATH}"
@@ -52,7 +58,19 @@ WORKDIR /home/emulator
 # Size of emulator /data partition in megabytes.
 ENV EMU_PARTITION_SIZE=8192
 
+# TODO: Is this the right syntax?
+ENV ADBKEY_PUB=
+
+# TODO: document the automatic adb<->emulator connection protocol:
+#  - IIRC, the emulator tries to connect to an adb server, or maybe not?
+#  - OTOH, I seem to recall that the adb server automatically scans for emulators
+#    This is usually how emulator-555* adb devices appear...? But of course an
+#    emulator can be started long after an adb server has started.
+# TODO: review the existing Docker Android emulator project on GitHub.
+# The internal adb server that the emulator connects to automatically.
 EXPOSE 5037
+# Allow external adb server to also connect to the emulator's adbd using "adb connect tcp:IP:5554"
+EXPOSE 5555
 
 HEALTHCHECK CMD emulator-wait-for-ready.sh 5
 

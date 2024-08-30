@@ -16,11 +16,6 @@ DOCKER_OPTIONS+=(--volume "${MONOREPO_ROOT}:/llvm")
 DOCKER_OPTIONS+=(--workdir "/llvm")
 DOCKER_OPTIONS+=(--cap-add=SYS_PTRACE)
 
-# Mount this volume to allow the main image to share its copy of the Android
-# platform tools with the emulator image, ensuring that the adb versions match.
-# This argument will create a new volume if it doesn't already exist.
-DOCKER_OPTIONS+=(--volume android-platform-tools:/mnt/android-platform-tools)
-
 # Pass through the Docker socket so that the buildbot can start a sibling
 # container running an Android emulator.
 if [ -S /var/run/docker.sock ]; then
@@ -28,4 +23,4 @@ if [ -S /var/run/docker.sock ]; then
 fi
 
 docker run "${DOCKER_OPTIONS[@]}" ghcr.io/libcxx/android-buildkite-builder \
-    bash -c 'git config --global --add safe.directory /llvm; (/opt/android/container-setup.sh && exec bash)'
+    bash -c 'git config --global --add safe.directory /llvm; exec bash'

@@ -6,8 +6,8 @@
 #
 #===----------------------------------------------------------------------===##
 
-export ADB_SERVER_SOCKET="tcp:$(docker inspect \
+export ANDROID_SERIAL="$(docker inspect \
     -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-    libcxx-ci-android-emulator):5037"
+    libcxx-ci-android-emulator):5555"
 
-echo "setup-env-for-emulator.sh: setting ADB_SERVER_SOCKET to ${ADB_SERVER_SOCKET}"
+echo "setup-env-for-emulator.sh: setting ANDROID_SERIAL to ${ANDROID_SERIAL}"
