@@ -6,6 +6,7 @@
 #
 #===----------------------------------------------------------------------===##
 
+from pathlib import Path
 import re
 import select
 import socket
@@ -93,3 +94,11 @@ def adb_job_limit_socket() -> str:
                      daemon=True).start()
 
     return sock_addr
+
+
+def setup_device(library_path: Path) -> None:
+    # Create adb_run early to avoid concurrent `mkdir -p` of common parent
+    # directories.
+    subprocess.run(["adb", "shell", "mkdir -p /data/local/tmp/adb_run"], check=True)
+    subprocess.run(["adb", "shell", "mkdir -p /data/local/tmp/libc++"], check=True)
+    subprocess.run(["adb", "push", str(library_path), "/data/local/tmp/libc++"], check=True)

@@ -3,6 +3,7 @@
 
 lit_config.load_config(config, '@CMAKE_CURRENT_BINARY_DIR@/cmake-bridge.cfg')
 
+from pathlib import Path
 import re
 import site
 
@@ -39,6 +40,7 @@ config.substitutions.append(('%{exec}',
     ' --prepend-path-env LD_LIBRARY_PATH /data/local/tmp/libc++ --execdir %T -- '
 ))
 
+libcxx.test.android.setup_device(Path('@LIBCXX_LIBRARY_DIR@/libc++_shared.so'))
 libcxx.test.config.configure(
     libcxx.test.params.DEFAULT_PARAMETERS,
     libcxx.test.features.DEFAULT_FEATURES,

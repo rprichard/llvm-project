@@ -22,33 +22,36 @@ if ! validate_emu_img "${EMU_IMG}"; then
     exit 1
 fi
 
-"${THIS_DIR}/stop-emulator.sh"
+# TODO: Somehow if the emulator is already running, that's probably OK? (But make sure we delete "enough" stuff and overwrite libc++_shared.so)
+#"${THIS_DIR}/stop-emulator.sh"
+if ! docker container inspect libcxx-ci-android-emulator &>/dev/null; then
 
-# TODO: Make sure ~/.android/adbkey.pub exists first! (nope -- see below)
+    # TODO: Make sure ~/.android/adbkey.pub exists first! (nope -- see below)
 
-# Start the container.
-docker run --name libcxx-ci-android-emulator --detach --device /dev/kvm \
-    -eEMU_PARTITION_SIZE=8192 \
-    $(docker_image_of_emu_img ${EMU_IMG})
+    # Start the container.
+    docker run --name libcxx-ci-android-emulator --detach --device /dev/kvm \
+        -eEMU_PARTITION_SIZE=8192 \
+        $(docker_image_of_emu_img ${EMU_IMG})
 
-# TODO: When I write ~/.android/adbkey.pub inside the emulator container, I
-# don't write ~/.android/adbkey. I don't know how that would work, but also it
-# doesn't work -- the container (emulator and/or adb server) creates a new
-# adbkey *and* adbkey.pub. So instead, I just don't propagate adbkey, and yet
-# the outer adb client/server are still able to connect to the emulator.
-#
-# Does the emulator just not care about checking the adbkey?
-#
-# See https://github.com/google/android-emulator-container-scripts/blob/master/emu/templates/launch-emulator.sh, install_adb_keys()
-#    -eADBKEY_PUB="$(cat ~/.android/adbkey.pub)"
-#
-# See adb, where load_userkey calls generate_key. It doesn't seem to care if only ~/.android/adbkey.pub exists.
-# See adb's use of "ro.adb.secure". It defaults to not-secure, and the two emulator containers I have don't set the property,
-# so no auth is required.
-#
+    # TODO: When I write ~/.android/adbkey.pub inside the emulator container, I
+    # don't write ~/.android/adbkey. I don't know how that would work, but also it
+    # doesn't work -- the container (emulator and/or adb server) creates a new
+    # adbkey *and* adbkey.pub. So instead, I just don't propagate adbkey, and yet
+    # the outer adb client/server are still able to connect to the emulator.
+    #
+    # Does the emulator just not care about checking the adbkey?
+    #
+    # See https://github.com/google/android-emulator-container-scripts/blob/master/emu/templates/launch-emulator.sh, install_adb_keys()
+    #    -eADBKEY_PUB="$(cat ~/.android/adbkey.pub)"
+    #
+    # See adb, where load_userkey calls generate_key. It doesn't seem to care if only ~/.android/adbkey.pub exists.
+    # See adb's use of "ro.adb.secure". It defaults to not-secure, and the two emulator containers I have don't set the property,
+    # so no auth is required.
+    #
 
-# TODO: Are there Android emulator images that *do* set ro.adb.secure?
-# TODO: Also, what about Cuttlefish?
+    # TODO: Are there Android emulator images that *do* set ro.adb.secure?
+    # TODO: Also, what about Cuttlefish?
+fi
 
 ERR=0
 docker exec libcxx-ci-android-emulator emulator-wait-for-ready.sh || ERR=${?}
